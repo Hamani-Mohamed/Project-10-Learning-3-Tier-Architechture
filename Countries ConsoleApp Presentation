@@ -1,0 +1,133 @@
+using System;
+using System.Data;
+using CountriesBusinessLayer;
+
+namespace ContactsConsoleAppPresentation
+{
+    internal class Program
+    {
+        static void testFindCountryByID(int ID)
+        {
+            clsCountry country = clsCountry.Find(ID);
+
+            if (country != null)
+            {
+                Console.WriteLine("Country ID : " + country.ID);
+                Console.WriteLine("Name       : " + country.CountryName);
+                Console.WriteLine("Code       : " + country.Code);
+                Console.WriteLine("Phone Code : " + country.PhoneCode);
+            }
+            else
+                Console.WriteLine("Country ID " + ID + " not found!");
+        }
+
+        static void testFindCountryByName(string CountryName)
+        {
+            clsCountry country = clsCountry.Find(CountryName);
+
+            if (country != null)
+            {
+                Console.WriteLine("Country ID : " + country.ID);
+                Console.WriteLine("Name       : " + country.CountryName);
+                Console.WriteLine("Code       : " + country.Code);
+                Console.WriteLine("Phone Code : " + country.PhoneCode);
+            }
+            else
+                Console.WriteLine(CountryName + " not found!");
+        }
+
+        static void testAddNewCountry()
+        {
+            clsCountry country = new clsCountry();
+
+            country.CountryName = "Iceland";
+            country.Code = "IS";
+            country.PhoneCode = "354";
+
+            if (country.Save())
+            {
+                Console.WriteLine("Country with ID " + country.ID + " saved successfully!");
+            }
+            else
+            {
+                Console.WriteLine("Country not created.");
+            }
+        }
+
+        static void testUpdateCountry(int ID)
+        {
+            clsCountry country = clsCountry.Find(ID);
+
+            if (country == null)
+            {
+                Console.WriteLine("Contact with ID " + ID + " not found.");
+                return;
+            }
+
+            country.CountryName = "Greenland";
+            country.Code = "GL";
+            country.PhoneCode = "299";
+
+            if (country.Save())
+            {
+                Console.WriteLine("Country with ID " + country.ID + " updated successfully!");
+            }
+            else
+            {
+                Console.WriteLine("Country not updated.");
+            }
+        }
+
+        static void testDeleteCountry(int ID)
+        {
+            if (clsCountry.DeleteCountry(ID))
+            {
+                Console.WriteLine("Country with ID " + ID + " deleted successfully!");
+            }
+            else
+                Console.WriteLine("Failed to delete country.");
+        }
+
+        static void CountriesList()
+        {
+            DataTable dt = clsCountry._GetAllCountries();
+
+            Console.WriteLine("Countries' List :");
+
+            foreach (DataRow row in dt.Rows)
+            {
+                Console.WriteLine($"{row["CountryID"]},  {row["CountryName"]}, {row["Code"]}, {row["PhoneCode"]}");
+            }
+        }
+
+        static void DoesCountryExist(int ID)
+        {
+            if (clsCountry._DoesCountryExist(ID))
+                Console.WriteLine("Country with ID " + ID + " exists.");
+            else
+                Console.WriteLine("Country with ID " + ID + " does NOT exist.");
+        }
+
+        static void DoesCountryExist(string CountryName)
+        {
+            if (clsCountry._DoesCountryExist(CountryName))
+                Console.WriteLine(CountryName + " is in the database.");
+            else
+                Console.WriteLine(CountryName + " is NOT in the database.");
+        }
+
+        static void Main(string[] args)
+        {
+            testFindCountryByID(2);
+            testFindCountryByName("United Kingdom");
+            testAddNewCountry();
+            testUpdateCountry(6);
+            testDeleteCountry(6);
+            CountriesList();
+            DoesCountryExist(1);
+            DoesCountryExist("United Kingdom");
+
+            Console.ReadKey();
+        }
+    }
+}
